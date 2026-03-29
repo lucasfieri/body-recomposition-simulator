@@ -32,6 +32,10 @@ _TRANSLATIONS: dict[str, dict[str, str]] = {
     "height_cm": {"en": "Height (cm)", "pt": "Altura (cm)"},
     "age": {"en": "Age", "pt": "Idade"},
     "sleep_hours": {"en": "Sleep (hours)", "pt": "Sono (horas)"},
+    "sleep_help": {
+        "en": "Sleep influences recovery, muscle protein synthesis, appetite regulation, and effective training output. Chronic short sleep can reduce lean mass retention and worsen adherence.",
+        "pt": "O sono influencia recuperação, síntese proteica muscular, regulação do apetite e desempenho no treino. Privação crônica pode reduzir preservação de massa magra e piorar aderência.",
+    },
     "training": {"en": "Training", "pt": "Treino"},
     "training_experience": {"en": "Training Experience", "pt": "Experiência de Treino"},
     "training_days_week": {"en": "Training days / week", "pt": "Dias de treino / semana"},
@@ -46,6 +50,33 @@ _TRANSLATIONS: dict[str, dict[str, str]] = {
     "weeks": {"en": "Weeks", "pt": "Semanas"},
     "months": {"en": "Months", "pt": "Meses"},
     "step": {"en": "Step", "pt": "Passo"},
+    "optional_factors": {"en": "Optional Factors", "pt": "Fatores Opcionais"},
+    "enable_optional_factors": {
+        "en": "Enable optional behavior factors",
+        "pt": "Habilitar fatores comportamentais opcionais",
+    },
+    "optional_factors_help": {
+        "en": "Adds optional variables to improve realism: NEAT/steps, alcohol intake, and adherence.",
+        "pt": "Adiciona variaveis opcionais para melhorar o realismo: NEAT/passos, consumo de alcool e aderencia.",
+    },
+    "neat_steps": {"en": "NEAT / Daily Steps", "pt": "NEAT / Passos Diarios"},
+    "neat_steps_help": {
+        "en": "Estimated average daily steps. More steps increase total daily energy expenditure (TDEE).",
+        "pt": "Estimativa media de passos diarios. Mais passos aumentam o gasto energetico diario total (TDEE).",
+    },
+    "alcohol_drinks_week": {
+        "en": "Alcohol Intake (drinks/week)",
+        "pt": "Consumo de Alcool (doses/semana)",
+    },
+    "alcohol_drinks_help": {
+        "en": "Approximate weekly alcoholic drinks. Alcohol adds calories and can reduce recovery quality.",
+        "pt": "Numero aproximado de doses alcoolicas por semana. O alcool adiciona calorias e pode reduzir a recuperacao.",
+    },
+    "adherence_pct": {"en": "Estimated Adherence (%)", "pt": "Aderencia Estimada (%)"},
+    "adherence_help": {
+        "en": "How closely your real routine follows the plan. Lower adherence reduces effective calorie strategy outcomes.",
+        "pt": "Quao perto sua rotina real segue o plano. Menor aderencia reduz o efeito pratico da estrategia calorica.",
+    },
     # ── Training levels ─────────────────────────────────────────────
     "beginner": {"en": "Beginner (< 1 yr)", "pt": "Iniciante (< 1 ano)"},
     "intermediate": {"en": "Intermediate (1-3 yr)", "pt": "Intermediário (1-3 anos)"},
@@ -54,28 +85,82 @@ _TRANSLATIONS: dict[str, dict[str, str]] = {
     "tab_cut": {"en": "🔻 Cut", "pt": "🔻 Cutting"},
     "tab_recomp": {"en": "⚖️ Recomp", "pt": "⚖️ Recomposição"},
     "tab_bulk": {"en": "🔺 Bulk", "pt": "🔺 Bulking"},
+    "scenario_cut": {"en": "Cut", "pt": "Cutting"},
+    "scenario_recomp": {"en": "Recomp", "pt": "Recomposição"},
+    "scenario_bulk": {"en": "Bulk", "pt": "Bulking"},
     # ── Scenario panel ──────────────────────────────────────────────
     "configuration": {"en": "Configuration", "pt": "Configuração"},
     "protein_g_kg": {"en": "Protein (g/kg)", "pt": "Proteína (g/kg)"},
     "protein_help": {
-        "en": "Optimal range: 1.6-2.2 g/kg for muscle retention/growth",
-        "pt": "Faixa ideal: 1.6-2.2 g/kg para retenção/ganho muscular",
+        "en": "Evidence summary (ISSN 2017): active individuals benefit from ~1.4-2.0 g/kg/day; in cutting phases, 2.0-2.4 g/kg can help preserve lean mass.",
+        "pt": "Resumo de evidencia (ISSN 2017): pessoas ativas se beneficiam de ~1.4-2.0 g/kg/dia; em cutting, 2.0-2.4 g/kg pode ajudar a preservar massa magra.",
     },
     "fat_pct_cal": {"en": "Fat (% of calories)", "pt": "Gordura (% das calorias)"},
     "fat_help": {
-        "en": "Minimum ~15% for hormonal health",
-        "pt": "Mínimo ~15% para saúde hormonal",
+        "en": "Evidence summary: keep at least ~15-20% of calories from fat to support hormonal function and adherence.",
+        "pt": "Resumo de evidencia: mantenha pelo menos ~15-20% das calorias vindas de gordura para suporte hormonal e aderencia.",
     },
     "calorie_delta": {"en": "Calorie delta (kcal/day)", "pt": "Delta calórico (kcal/dia)"},
     "calorie_delta_help": {
-        "en": "Negative = deficit (fat loss), Positive = surplus (muscle gain)",
-        "pt": "Negativo = déficit (perda de gordura), Positivo = superávit (ganho muscular)",
+        "en": "Negative = deficit (fat loss), positive = surplus (muscle gain). Typical practical ranges: cut ~200-700 kcal/day, lean bulk ~100-350 kcal/day.",
+        "pt": "Negativo = deficit (perda de gordura), positivo = superavit (ganho muscular). Faixas praticas comuns: cut ~200-700 kcal/dia, bulk limpo ~100-350 kcal/dia.",
     },
     "carb_cycling": {"en": "Carb Cycling", "pt": "Ciclo de Carboidratos"},
     "high_carb_days": {"en": "High-carb days/week", "pt": "Dias altos em carb/semana"},
     "carb_increase": {
         "en": "Carb increase on high days (%)",
         "pt": "Aumento de carb nos dias altos (%)",
+    },
+    "carb_cycling_help": {
+        "en": "Redistributes carbs across the week while keeping weekly calories closer to plan.",
+        "pt": "Redistribui carboidratos ao longo da semana mantendo as calorias semanais mais proximas do plano.",
+    },
+    "high_carb_days_help": {
+        "en": "Choose how many days will have higher carbohydrate intake.",
+        "pt": "Escolha quantos dias terao maior ingestao de carboidratos.",
+    },
+    "carb_increase_help": {
+        "en": "How much carbs increase on high days relative to baseline.",
+        "pt": "Quanto os carboidratos aumentam nos dias altos em relacao ao baseline.",
+    },
+    "profile_preset": {"en": "Profile Preset", "pt": "Preset de Perfil"},
+    "profile_preset_help": {
+        "en": "Applies preconfigured macro and calorie targets for common profiles.",
+        "pt": "Aplica metas preconfiguradas de macros e calorias para perfis comuns.",
+    },
+    "profile_beginner": {"en": "Beginner", "pt": "Iniciante"},
+    "profile_athlete": {"en": "Athlete", "pt": "Atleta"},
+    "profile_aggressive_cut": {"en": "Aggressive Cut", "pt": "Cutting Agressivo"},
+    "profile_light_recomp": {"en": "Light Recomp", "pt": "Recomposicao Leve"},
+    "apply_profile_preset": {"en": "Apply Preset", "pt": "Aplicar Preset"},
+    "profile_preset_applied": {
+        "en": "Profile preset applied to calories and macros.",
+        "pt": "Preset de perfil aplicado em calorias e macros.",
+    },
+    "profile_preset_disabled_in_goal": {
+        "en": "Profile preset is disabled while Goal Mode is active (auto targets enabled).",
+        "pt": "Preset de perfil desativado enquanto o Modo Meta estiver ativo (metas automáticas habilitadas).",
+    },
+    "goal_mode": {"en": "Goal Mode (Auto)", "pt": "Modo Meta (Auto)"},
+    "goal_mode_help": {
+        "en": "Automatically computes calorie delta and macro targets from your target BF%.",
+        "pt": "Calcula automaticamente delta calórico e metas de macros a partir da sua meta de BF%.",
+    },
+    "goal_target_bf": {"en": "Target Body Fat (%)", "pt": "Meta de Gordura Corporal (%)"},
+    "goal_strategy_cut": {"en": "Fat-loss focus", "pt": "Foco em perda de gordura"},
+    "goal_strategy_gain": {"en": "Lean-gain focus", "pt": "Foco em ganho de massa magra"},
+    "goal_strategy_maintain": {"en": "Recomposition/maintenance", "pt": "Recomposicao/manutencao"},
+    "goal_mode_summary": {
+        "en": "Current BF: {current:.1f}% -> Target BF: {target:.1f}%",
+        "pt": "BF atual: {current:.1f}% -> BF meta: {target:.1f}%",
+    },
+    "goal_item_strategy": {"en": "Strategy", "pt": "Estratégia"},
+    "goal_item_calorie_delta": {"en": "Calorie Delta", "pt": "Delta Calórico"},
+    "goal_item_protein": {"en": "Protein Target", "pt": "Meta de Proteína"},
+    "goal_item_fat": {"en": "Fat Target", "pt": "Meta de Gordura"},
+    "goal_mode_reference": {
+        "en": "Heuristic based on Aragon muscle-gain ceilings (2020), ISSN protein guidance (2017), and conservative surplus/deficit practice.",
+        "pt": "Heurística baseada nos limites de ganho muscular de Aragon (2020), recomendações de proteína da ISSN (2017) e prática conservadora de superávit/déficit.",
     },
     # ── Metrics ─────────────────────────────────────────────────────
     "projected_results": {"en": "Projected Results", "pt": "Resultados Projetados"},
@@ -148,11 +233,23 @@ _TRANSLATIONS: dict[str, dict[str, str]] = {
         "en": "Loading model from HuggingFace...",
         "pt": "Carregando modelo do HuggingFace...",
     },
+    "hf_missing_dependency": {
+        "en": "Optional dependency missing: {package}. Install it to use AI body fat estimation.",
+        "pt": "Dependencia opcional ausente: {package}. Instale para usar a estimativa de gordura por IA.",
+    },
+    "hf_tech_details": {
+        "en": "Technical details: {error}",
+        "pt": "Detalhes tecnicos: {error}",
+    },
     "hf_error": {
-        "en": "Could not load the model. Make sure `tensorflow` is installed:\n\n```bash\nuv add tensorflow\n```",
-        "pt": "Não foi possível carregar o modelo. Verifique se o `tensorflow` está instalado:\n\n```bash\nuv add tensorflow\n```",
+        "en": "Could not load the HuggingFace model. Please verify your internet connection and dependency setup.",
+        "pt": "Nao foi possivel carregar o modelo do HuggingFace. Verifique sua conexao com a internet e as dependencias.",
     },
     "hf_result": {"en": "Estimated Body Fat", "pt": "Gordura Corporal Estimada"},
+    "hf_current_result": {
+        "en": "Current AI estimate being used",
+        "pt": "Estimativa atual por IA em uso",
+    },
     "hf_result_caption": {
         "en": (
             "This estimate is based on the ChanMeng666/bodyfat-estimation-mlp neural network. "
@@ -164,6 +261,22 @@ _TRANSLATIONS: dict[str, dict[str, str]] = {
         ),
     },
     "hf_prediction_failed": {"en": "Prediction failed", "pt": "Falha na predição"},
+    "hf_prediction_failed_friendly": {
+        "en": "Prediction failed. Please review the measurements and try again.",
+        "pt": "Falha na predicao. Revise as medidas informadas e tente novamente.",
+    },
+    "hf_chart_applied_notice": {
+        "en": "AI estimated body fat is being used as the initial value for simulation charts: {bf:.1f}%.",
+        "pt": "A gordura corporal estimada por IA esta sendo usada como valor inicial nos graficos da simulacao: {bf:.1f}%.",
+    },
+    "bf_badge_active": {
+        "en": "AI BF active: {bf:.1f}%",
+        "pt": "BF por IA ativo: {bf:.1f}%",
+    },
+    "bf_badge_inactive": {
+        "en": "AI BF inactive",
+        "pt": "BF por IA inativo",
+    },
     # ── Scientific references footer ────────────────────────────────
     "references_title": {
         "en": "📚 Scientific Evidence & References",
@@ -349,6 +462,72 @@ _TRANSLATIONS: dict[str, dict[str, str]] = {
             "*International Society of Sports Nutrition Position Stand: protein and exercise.* "
             "Journal of the International Society of Sports Nutrition, 14, 20. "
             "[doi:10.1186/s12970-017-0177-8](https://doi.org/10.1186/s12970-017-0177-8)"
+        ),
+    },
+    "ref_neat_title": {
+        "en": "NEAT / Daily Steps — Energy Expenditure",
+        "pt": "NEAT / Passos Diários — Gasto Energético",
+    },
+    "ref_neat_desc": {
+        "en": (
+            "NEAT (non-exercise activity thermogenesis) is a major contributor to inter-individual differences in daily energy expenditure and fat-gain resistance. "
+            "This simulator optionally adjusts TDEE using daily steps as a practical NEAT proxy.\n\n"
+            "📄 Levine, J. A., Eberhardt, N. L., & Jensen, M. D. (1999). "
+            "*Role of nonexercise activity thermogenesis in resistance to fat gain in humans.* "
+            "Science, 283(5399), 212-214. "
+            "[doi:10.1126/science.283.5399.212](https://doi.org/10.1126/science.283.5399.212)"
+        ),
+        "pt": (
+            "NEAT (termogênese de atividade não-exercício) é um grande determinante das diferenças individuais no gasto energético diário e na resistência ao ganho de gordura. "
+            "Este simulador ajusta opcionalmente o TDEE usando passos diários como proxy prático de NEAT.\n\n"
+            "📄 Levine, J. A., Eberhardt, N. L., & Jensen, M. D. (1999). "
+            "*Role of nonexercise activity thermogenesis in resistance to fat gain in humans.* "
+            "Science, 283(5399), 212-214. "
+            "[doi:10.1126/science.283.5399.212](https://doi.org/10.1126/science.283.5399.212)"
+        ),
+    },
+    "ref_alcohol_title": {
+        "en": "Alcohol Intake — Recovery and Muscle Protein Synthesis",
+        "pt": "Consumo de Álcool — Recuperação e Síntese Proteica Muscular",
+    },
+    "ref_alcohol_desc": {
+        "en": (
+            "Post-exercise alcohol ingestion can impair myofibrillar protein synthesis, potentially affecting recovery and adaptation. "
+            "The simulator includes an optional alcohol factor that adds calories and applies a conservative recovery penalty.\n\n"
+            "📄 Parr, E. B., Camera, D. M., Areta, J. L., et al. (2014). "
+            "*Alcohol ingestion impairs maximal post-exercise rates of myofibrillar protein synthesis following a single bout of concurrent training.* "
+            "PLOS ONE, 9(2), e88384. "
+            "[doi:10.1371/journal.pone.0088384](https://doi.org/10.1371/journal.pone.0088384)"
+        ),
+        "pt": (
+            "A ingestão de álcool após o treino pode prejudicar a síntese proteica miofibrilar, afetando recuperação e adaptação. "
+            "O simulador inclui um fator opcional de álcool que adiciona calorias e aplica uma penalidade conservadora de recuperação.\n\n"
+            "📄 Parr, E. B., Camera, D. M., Areta, J. L., et al. (2014). "
+            "*Alcohol ingestion impairs maximal post-exercise rates of myofibrillar protein synthesis following a single bout of concurrent training.* "
+            "PLOS ONE, 9(2), e88384. "
+            "[doi:10.1371/journal.pone.0088384](https://doi.org/10.1371/journal.pone.0088384)"
+        ),
+    },
+    "ref_adherence_title": {
+        "en": "Diet Adherence — Real-World Outcome Predictor",
+        "pt": "Aderência à Dieta — Preditor de Resultado no Mundo Real",
+    },
+    "ref_adherence_desc": {
+        "en": (
+            "Across named diet strategies, adherence is one of the strongest predictors of weight-loss outcomes in free-living settings. "
+            "This simulator includes an adherence percentage to scale effective strategy implementation.\n\n"
+            "📄 Dansinger, M. L., Gleason, J. A., Griffith, J. L., Selker, H. P., & Schaefer, E. J. (2005). "
+            "*Comparison of the Atkins, Ornish, Weight Watchers, and Zone diets for weight loss and heart disease risk reduction: a randomized trial.* "
+            "JAMA, 293(1), 43-53. "
+            "[doi:10.1001/jama.293.1.43](https://doi.org/10.1001/jama.293.1.43)"
+        ),
+        "pt": (
+            "Entre diferentes estratégias dietéticas, a aderência é um dos preditores mais fortes de perda de peso em condições de vida real. "
+            "Este simulador inclui um percentual de aderência para escalar a implementação efetiva da estratégia.\n\n"
+            "📄 Dansinger, M. L., Gleason, J. A., Griffith, J. L., Selker, H. P., & Schaefer, E. J. (2005). "
+            "*Comparison of the Atkins, Ornish, Weight Watchers, and Zone diets for weight loss and heart disease risk reduction: a randomized trial.* "
+            "JAMA, 293(1), 43-53. "
+            "[doi:10.1001/jama.293.1.43](https://doi.org/10.1001/jama.293.1.43)"
         ),
     },
     "ref_hf_title": {

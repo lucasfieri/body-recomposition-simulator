@@ -4,17 +4,19 @@ Optional HuggingFace body fat estimation using ChanMeng666/bodyfat-estimation-ml
 
 from __future__ import annotations
 
+import numpy as np
 import streamlit as st
 
 from src.i18n import t
 
 try:
-    import numpy as np
     from huggingface_hub import hf_hub_download
 
     HF_AVAILABLE = True
-except ImportError:
+    HF_IMPORT_ERROR = ""
+except ImportError as e:
     HF_AVAILABLE = False
+    HF_IMPORT_ERROR = str(e)
 
 _MODEL_REPO = "ChanMeng666/bodyfat-estimation-mlp"
 _MODEL_FILE = "best_selected_features_model.keras"
@@ -28,9 +30,11 @@ def _load_model():
 
         model_path = hf_hub_download(repo_id=_MODEL_REPO, filename=_MODEL_FILE)
         model = tf.keras.models.load_model(model_path)
-        return model
-    except Exception:
-        return None
+        return model, None
+    except ImportError as e:
+        return None, f"tensorflow_missing: {e}"
+    except Exception as e:
+        return None, str(e)
 
 
 def render_hf_bodyfat_panel(
@@ -42,10 +46,16 @@ def render_hf_bodyfat_panel(
     Accepts metric values from sidebar and auto-converts to imperial for the model.
     """
     if not HF_AVAILABLE:
-        st.info(t("hf_install_msg", lang))
+        st.error(t("hf_missing_dependency", lang).format(package="huggingface-hub"))
+        st.code("uv add huggingface-hub", language="bash")
+        if HF_IMPORT_ERROR:
+            st.caption(t("hf_tech_details", lang).format(error=HF_IMPORT_ERROR))
         return None
 
     st.markdown(t("hf_description", lang))
+
+    if "hf_bf_estimate" not in st.session_state:
+        st.session_state["hf_bf_estimate"] = None
 
     use_hf = st.checkbox(t("hf_use_ai", lang), value=False, key="hf_enable")
 
@@ -81,10 +91,17 @@ def render_hf_bodyfat_panel(
 
     if st.button(t("hf_estimate_btn", lang), key="hf_estimate"):
         with st.spinner(t("hf_loading", lang)):
-            model = _load_model()
+            model, load_error = _load_model()
 
         if model is None:
-            st.error(t("hf_error", lang))
+            if load_error and load_error.startswith("tensorflow_missing"):
+                st.error(t("hf_missing_dependency", lang).format(package="tensorflow"))
+                st.code("uv add tensorflow", language="bash")
+            else:
+                st.error(t("hf_error", lang))
+
+            if load_error:
+                st.caption(t("hf_tech_details", lang).format(error=load_error))
             return None
 
         features = np.array([
@@ -95,12 +112,17 @@ def render_hf_bodyfat_panel(
             prediction = model.predict(features, verbose=0)
             bf_pct = float(prediction[0][0])
             bf_pct = max(3.0, min(50.0, bf_pct))
+            st.session_state["hf_bf_estimate"] = bf_pct
 
             st.success(f"**{t('hf_result', lang)}: {bf_pct:.1f}%**")
             st.caption(t("hf_result_caption", lang))
             return bf_pct
         except Exception as e:
-            st.error(f"{t('hf_prediction_failed', lang)}: {e}")
+            st.error(t("hf_prediction_failed_friendly", lang))
+            st.caption(t("hf_tech_details", lang).format(error=str(e)))
             return None
 
-    return None
+    stored_bf = st.session_state.get("hf_bf_estimate")
+    if stored_bf is not None:
+        st.info(f"{t('hf_current_result', lang)}: {stored_bf:.1f}%")
+    return stored_bf

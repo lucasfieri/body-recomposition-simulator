@@ -15,6 +15,9 @@ _REFERENCE_KEYS = [
     ("ref_tef_title", "ref_tef_desc"),
     ("ref_deurenberg_title", "ref_deurenberg_desc"),
     ("ref_issn_title", "ref_issn_desc"),
+    ("ref_neat_title", "ref_neat_desc"),
+    ("ref_alcohol_title", "ref_alcohol_desc"),
+    ("ref_adherence_title", "ref_adherence_desc"),
     ("ref_hf_title", "ref_hf_desc"),
 ]
 

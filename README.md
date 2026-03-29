@@ -48,6 +48,9 @@ The simulator is grounded in the following peer-reviewed research:
 | **Forbes P-Ratio** | P_fat = FM / (FM + 10.4) — non-linear fat/lean partitioning | Forbes (1987). *Nutr Rev*, 45(8), 225–231. [doi:10.1111/j.1753-4887.1987.tb07489.x](https://doi.org/10.1111/j.1753-4887.1987.tb07489.x) |
 | **TEF** | Protein ~25%, Carbs ~7%, Fat ~3% of intake | Westerterp (2004). *Nutr Metab*, 1, 5. [doi:10.1186/1743-7075-1-5](https://doi.org/10.1186/1743-7075-1-5) |
 | **ISSN Protein** | 1.4–2.0 g/kg/day for active individuals | Jäger et al. (2017). *JISSN*, 14, 20. [doi:10.1186/s12970-017-0177-8](https://doi.org/10.1186/s12970-017-0177-8) |
+| **NEAT / Steps** | Non-exercise activity strongly influences TDEE and fat-gain resistance | Levine et al. (1999). *Science*, 283(5399), 212-214. [doi:10.1126/science.283.5399.212](https://doi.org/10.1126/science.283.5399.212) |
+| **Alcohol and Recovery** | Alcohol can impair post-exercise myofibrillar protein synthesis | Parr et al. (2014). *PLOS ONE*, 9(2), e88384. [doi:10.1371/journal.pone.0088384](https://doi.org/10.1371/journal.pone.0088384) |
+| **Diet Adherence** | Adherence predicts real-world weight-loss outcomes across diet styles | Dansinger et al. (2005). *JAMA*, 293(1), 43-53. [doi:10.1001/jama.293.1.43](https://doi.org/10.1001/jama.293.1.43) |
 | **HuggingFace MLP** | Body fat from anthropometric measurements (R² ≈ 0.97) | [ChanMeng666/bodyfat-estimation-mlp](https://huggingface.co/ChanMeng666/bodyfat-estimation-mlp) |
 
 ## Getting Started
@@ -66,15 +69,32 @@ cd body-recomposition-simulator
 
 # Install dependencies
 uv sync
+```
 
-# (Optional) Install AI body fat estimation
-uv sync --extra ai
+### Select The Project Environment
+
+```bash
+# Optional: if another project env is active
+deactivate 2>/dev/null || true
+
+# Activate this project's virtual environment
+source .venv/bin/activate
+```
+
+If you prefer not to activate the environment manually, run commands via `uv` with:
+
+```bash
+env -u VIRTUAL_ENV uv run <command>
 ```
 
 ### Running
 
 ```bash
+# Default
 uv run streamlit run app.py
+
+# If another VIRTUAL_ENV is active in your shell
+env -u VIRTUAL_ENV uv run streamlit run app.py
 ```
 
 The app will open at `http://localhost:8501`.

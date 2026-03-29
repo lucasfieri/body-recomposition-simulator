@@ -33,6 +33,26 @@ st.markdown(
         font-size: 1.05rem;
         font-weight: 600;
     }
+    .bf-status-badge {
+        position: fixed;
+        top: 0.75rem;
+        right: 1rem;
+        z-index: 1000;
+        padding: 0.45rem 0.8rem;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .bf-status-active {
+        background: rgba(34, 197, 94, 0.18);
+        color: #bbf7d0;
+    }
+    .bf-status-inactive {
+        background: rgba(251, 191, 36, 0.16);
+        color: #fde68a;
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -43,7 +63,7 @@ _browser_locale = getattr(st.context, "locale", "en") or "en"
 _default_lang_index = 1 if _browser_locale.startswith("pt") else 0
 
 lang = st.sidebar.selectbox(
-    "🌐 Language / Idioma",
+    t("language", lang="en") + " / " + t("language", lang="pt"),
     ["en", "pt"],
     index=_default_lang_index,
     format_func=lambda x: "English" if x == "en" else "Português",
@@ -60,6 +80,18 @@ with st.expander(t("hf_title", lang), expanded=False):
     hf_bf = render_hf_bodyfat_panel(lang, sidebar_params["weight"], sidebar_params["height"])
 
 initial_bf = hf_bf if hf_bf is not None else None
+using_ai_bf = st.session_state.get("hf_enable", False) and initial_bf is not None
+
+status_class = "bf-status-active" if using_ai_bf else "bf-status-inactive"
+status_text = (
+    t("bf_badge_active", lang).format(bf=initial_bf)
+    if using_ai_bf
+    else t("bf_badge_inactive", lang)
+)
+st.markdown(
+    f'<div class="bf-status-badge {status_class}">{status_text}</div>',
+    unsafe_allow_html=True,
+)
 
 # ── Scenario Tabs ────────────────────────────────────────────────────────────
 tab_cut, tab_recomp, tab_bulk = st.tabs([
@@ -71,6 +103,7 @@ tab_cut, tab_recomp, tab_bulk = st.tabs([
 
 def run_scenario(
     tab,
+    scenario_key: str,
     scenario_name: str,
     default_protein: float,
     default_fat_pct: int,
@@ -84,11 +117,14 @@ def run_scenario(
 
         with col_config:
             params = render_scenario_panel(
+                scenario_key,
                 scenario_name,
                 default_protein,
                 default_fat_pct,
                 default_calories_delta,
                 lang,
+                initial_bf,
+                sidebar_params["training_level"],
             )
 
         sim_params = SimulationParams(
@@ -106,6 +142,9 @@ def run_scenario(
             training_days_per_week=sidebar_params["training_days"],
             start_date=sidebar_params["start"],
             end_date=sidebar_params["end"],
+            neat_steps_per_day=sidebar_params["neat_steps"],
+            alcohol_drinks_per_week=sidebar_params["alcohol_drinks_week"],
+            adherence_pct=sidebar_params["adherence_pct"],
             initial_bf_pct=initial_bf,
             sex=sidebar_params["sex"],
         )
@@ -124,6 +163,9 @@ def run_scenario(
 
         with col_charts:
             st.subheader(f"{scenario_name} — {t('projected_results', lang)}")
+
+            if using_ai_bf:
+                st.warning(t("hf_chart_applied_notice", lang).format(bf=initial_bf))
 
             metric_cols = st.columns(4)
             final = df.iloc[-1]
@@ -163,12 +205,14 @@ def run_scenario(
                 st.plotly_chart(
                     plot_weight_evolution(df_view, color_primary, lang),
                     width="stretch",
+                    key=f"{scenario_key}_chart_weight",
                 )
 
             with chart_tab2:
                 st.plotly_chart(
                     plot_body_composition(df_view, color_primary, color_secondary, lang),
                     width="stretch",
+                    key=f"{scenario_key}_chart_composition",
                 )
 
             with chart_tab3:
@@ -177,11 +221,13 @@ def run_scenario(
                     st.plotly_chart(
                         plot_bf_gauge(final["bf_pct"], lang),
                         width="stretch",
+                        key=f"{scenario_key}_chart_bf_gauge",
                     )
                 with g2:
                     st.plotly_chart(
                         plot_muscle_gain_rate(meta["avg_weekly_muscle_gain_g"], lang),
                         width="stretch",
+                        key=f"{scenario_key}_chart_muscle_rate",
                     )
                 with g3:
                     st.plotly_chart(
@@ -192,13 +238,32 @@ def run_scenario(
                             lang,
                         ),
                         width="stretch",
+                        key=f"{scenario_key}_chart_macro_split",
                     )
 
 
 # ── Render each scenario ─────────────────────────────────────────────────────
-run_scenario(tab_cut, "Cut", 2.2, 25, -500, "#ef4444", "#fca5a5")
-run_scenario(tab_recomp, "Recomp", 2.0, 28, 0, "#3b82f6", "#93c5fd")
-run_scenario(tab_bulk, "Bulk", 1.8, 30, 300, "#22c55e", "#86efac")
+run_scenario(tab_cut, "cut", t("scenario_cut", lang), 2.2, 25, -500, "#ef4444", "#fca5a5")
+run_scenario(
+    tab_recomp,
+    "recomp",
+    t("scenario_recomp", lang),
+    2.0,
+    28,
+    0,
+    "#3b82f6",
+    "#93c5fd",
+)
+run_scenario(
+    tab_bulk,
+    "bulk",
+    t("scenario_bulk", lang),
+    1.8,
+    30,
+    300,
+    "#22c55e",
+    "#86efac",
+)
 
 # ── Scientific References Footer ─────────────────────────────────────────────
 render_references(lang)

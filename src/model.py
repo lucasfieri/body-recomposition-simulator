@@ -42,6 +42,10 @@ _DEFICIT_MUSCLE_FACTOR: dict[TrainingLevel, float] = {
     TrainingLevel.ADVANCED: 0.1,
 }
 
+_BASELINE_NEAT_STEPS = 7000
+_KCAL_PER_STEP = 0.04
+_ALCOHOL_KCAL_PER_DRINK = 140
+
 
 @dataclass
 class SimulationParams:
@@ -59,6 +63,9 @@ class SimulationParams:
     training_days_per_week: int
     start_date: date
     end_date: date
+    neat_steps_per_day: int | None = None
+    alcohol_drinks_per_week: int = 0
+    adherence_pct: float = 100.0
     initial_bf_pct: float | None = None
     sex: str = "Male"
 
@@ -211,11 +218,23 @@ def simulate(params: SimulationParams) -> tuple[pd.DataFrame, dict]:
     weight[0] = params.initial_weight_kg  # matches user input exactly
     bf_pct_arr[0] = bf_pct_initial
 
+    adherence_ratio = max(0.6, min(1.0, params.adherence_pct / 100.0))
+    neat_steps = params.neat_steps_per_day if params.neat_steps_per_day is not None else None
+    neat_delta_kcal = 0.0
+    if neat_steps is not None:
+        neat_delta_kcal = (neat_steps - _BASELINE_NEAT_STEPS) * _KCAL_PER_STEP
+
+    alcohol_kcal_day = max(0.0, params.alcohol_drinks_per_week) * _ALCOHOL_KCAL_PER_DRINK / 7
+    alcohol_recovery_factor = max(0.85, 1.0 - params.alcohol_drinks_per_week * 0.005)
+
     # Macro split — protect against non-positive intake
     base_tdee = _bmr_mifflin(
         params.initial_weight_kg, params.height_cm, params.age, params.sex
     ) * _activity_multiplier(params.training_days_per_week)
-    total_intake = max(800.0, base_tdee + params.calorie_delta)
+    total_intake = max(
+        800.0,
+        base_tdee + params.calorie_delta * adherence_ratio + alcohol_kcal_day,
+    )
 
     protein_kcal = params.protein_g_per_kg * params.initial_weight_kg * 4
     protein_pct = min(60.0, (protein_kcal / total_intake) * 100)
@@ -224,8 +243,10 @@ def simulate(params: SimulationParams) -> tuple[pd.DataFrame, dict]:
 
     # Factors
     sleep_factor = max(0.65, min(1.05, 1.0 - 0.12 * (7 - params.sleep_hours)))
-    protein_factor = min(1.0, params.protein_g_per_kg / 2.2)
-    training_stimulus = min(1.0, params.training_days_per_week / 5)
+    protein_factor = min(1.0, params.protein_g_per_kg / 2.2) * (0.9 + 0.1 * adherence_ratio)
+    training_stimulus = min(1.0, params.training_days_per_week / 5) * (
+        0.85 + 0.15 * adherence_ratio
+    )
 
     for day in range(1, n_days):
         current_bf_pct = (
@@ -242,23 +263,24 @@ def simulate(params: SimulationParams) -> tuple[pd.DataFrame, dict]:
         activity_mult = _activity_multiplier(params.training_days_per_week)
         at_mult = _adaptive_thermogenesis(day, params.initial_weight_kg, weight[day - 1])
 
-        tdee = bmr * activity_mult * at_mult
+        tdee = bmr * activity_mult * at_mult + neat_delta_kcal
+        tdee = max(900.0, tdee)
         tdee_arr[day] = tdee
 
         # Calorie intake with carb cycling redistribution
-        daily_delta = params.calorie_delta
+        daily_delta = params.calorie_delta * adherence_ratio
         carb_today = carb_pct_macro
         if params.carb_cycling:
             daily_delta, carb_today = _apply_carb_cycling(
                 day,
-                params.calorie_delta,
+                int(params.calorie_delta * adherence_ratio),
                 carb_pct_macro,
                 total_intake,
                 params.carb_cycling_high_days,
                 params.carb_cycling_increase_pct,
             )
 
-        intake = tdee + daily_delta
+        intake = tdee + daily_delta + alcohol_kcal_day
 
         # Energy balance
         effective_delta = intake - tdee
@@ -277,8 +299,8 @@ def simulate(params: SimulationParams) -> tuple[pd.DataFrame, dict]:
         max_muscle = _max_daily_muscle_gain(
             weight[day - 1],
             params.training_level,
-            protein_factor,
-            sleep_factor,
+            protein_factor * alcohol_recovery_factor,
+            sleep_factor * alcohol_recovery_factor,
             training_stimulus,
             surplus_ratio,
         )
@@ -323,6 +345,9 @@ def simulate(params: SimulationParams) -> tuple[pd.DataFrame, dict]:
         "carb_pct": carb_pct_macro,
         "avg_weekly_muscle_gain_g": avg_weekly_muscle_gain_g,
         "initial_bf_pct": bf_pct_initial,
+        "adherence_pct": adherence_ratio * 100,
+        "neat_steps_per_day": neat_steps,
+        "alcohol_drinks_per_week": params.alcohol_drinks_per_week,
     }
 
     return df, meta
