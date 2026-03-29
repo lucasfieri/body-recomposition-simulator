@@ -9,18 +9,14 @@ dependencies = [
     "pandas>=2.2.0",
     "plotly>=5.24.0",
     "watchdog>=6.0.0",
+    "huggingface-hub>=0.24.0",
+    "tensorflow>=2.16.0",
 ]
 
 [dependency-groups]
 dev = [
     "commitizen>=3.29.0",
     "ruff>=0.11.0",
-]
-
-[project.optional-dependencies]
-ai = [
-    "huggingface-hub>=0.24.0",
-    "tensorflow>=2.16.0",
 ]
 
 [tool.ruff]

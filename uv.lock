@@ -106,17 +106,13 @@ name = "body-recomp-simulator"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "huggingface-hub" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "plotly" },
     { name = "streamlit" },
-    { name = "watchdog" },
-]
-
-[package.optional-dependencies]
-ai = [
-    { name = "huggingface-hub" },
     { name = "tensorflow" },
+    { name = "watchdog" },
 ]
 
 [package.dev-dependencies]
@@ -127,15 +123,14 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "huggingface-hub", marker = "extra == 'ai'", specifier = ">=0.24.0" },
+    { name = "huggingface-hub", specifier = ">=0.24.0" },
     { name = "numpy", specifier = ">=1.26.0" },
     { name = "pandas", specifier = ">=2.2.0" },
     { name = "plotly", specifier = ">=5.24.0" },
     { name = "streamlit", specifier = ">=1.40.0" },
-    { name = "tensorflow", marker = "extra == 'ai'", specifier = ">=2.16.0" },
+    { name = "tensorflow", specifier = ">=2.16.0" },
     { name = "watchdog", specifier = ">=6.0.0" },
 ]
-provides-extras = ["ai"]
 
 [package.metadata.requires-dev]
 dev = [
