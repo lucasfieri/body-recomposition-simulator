@@ -2,7 +2,7 @@
 
 An interactive, evidence-based body composition simulator built with [Streamlit](https://streamlit.io/) and [Plotly](https://plotly.com/python/). It projects changes in weight, fat mass, lean mass, and body fat percentage over time — using peer-reviewed physiological models instead of simplistic "3500 kcal = 1 lb" assumptions.
 
-> **Try it live:** [body-recomp-simulator.streamlit.app](https://body-recomp-simulator.streamlit.app) *(update URL after deploy)*
+> **Try it live:** [body-recomposition-simulator.streamlit.app](https://body-recomposition-simulator.streamlit.app)
 
 ## Features
 
@@ -61,8 +61,8 @@ The simulator is grounded in the following peer-reviewed research:
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/body-recomp-simulator.git
-cd body-recomp-simulator
+git clone https://github.com/lucasfieri/body-recomposition-simulator.git
+cd body-recomposition-simulator
 
 # Install dependencies
 uv sync
