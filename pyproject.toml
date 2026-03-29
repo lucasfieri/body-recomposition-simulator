@@ -1,0 +1,46 @@
+[project]
+name = "body-recomp-simulator"
+version = "0.1.0"
+description = "Evidence-based body recomposition simulator with interactive charts"
+requires-python = ">=3.12"
+dependencies = [
+    "streamlit>=1.40.0",
+    "numpy>=1.26.0",
+    "pandas>=2.2.0",
+    "plotly>=5.24.0",
+    "watchdog>=6.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "commitizen>=3.29.0",
+    "ruff>=0.11.0",
+]
+
+[project.optional-dependencies]
+ai = [
+    "huggingface-hub>=0.24.0",
+    "tensorflow>=2.16.0",
+]
+
+[tool.ruff]
+line-length = 99
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "Q", "I", "UP", "B"]
+per-file-ignores = { "src/i18n.py" = ["E501"] }
+
+[tool.ruff.format]
+preview = true
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.1.0"
+tag_format = "v$version"
+update_changelog_on_bump = true
+version_files = [
+    "pyproject.toml:version",
+]
